@@ -210,11 +210,11 @@
       ],
       "startedAt": 0,
       "duration": 120000,
-      "finalReport": "5项全部修复完成",
+      "finalReport": "5项全部通过QA审核",
       "createdAt": 1774518437526,
       "qaRequired": true,
       "note": "update-task.js中实现done时自动迁移>12h任务到history[]",
-      "doneAt": 1774518613004
+      "doneAt": 1774518816633
     },
     {
       "id": "task-039",
@@ -229,14 +229,14 @@
       ],
       "startedAt": 0,
       "duration": 120000,
-      "finalReport": "5项全部修复完成",
+      "finalReport": "5项全部通过QA审核",
       "createdAt": 1774518437526,
       "dependsOn": [
         "task-038"
       ],
       "qaRequired": true,
       "note": "loadTasks时合并tasks[]+history[]，而非仅读tasks[]",
-      "doneAt": 1774518613004
+      "doneAt": 1774518816633
     },
     {
       "id": "task-040",
@@ -251,13 +251,13 @@
       ],
       "startedAt": 0,
       "duration": 120000,
-      "finalReport": "5项全部修复完成",
+      "finalReport": "5项全部通过QA审核",
       "createdAt": 1774518437526,
       "dependsOn": [
         "task-039"
       ],
       "qaRequired": true,
-      "doneAt": 1774518613004
+      "doneAt": 1774518816633
     },
     {
       "id": "task-041",
@@ -272,13 +272,13 @@
       ],
       "startedAt": 0,
       "duration": 120000,
-      "finalReport": "5项全部修复完成",
+      "finalReport": "5项全部通过QA审核",
       "createdAt": 1774518437526,
       "dependsOn": [
         "task-040"
       ],
       "qaRequired": true,
-      "doneAt": 1774518613004
+      "doneAt": 1774518816633
     },
     {
       "id": "task-042",
@@ -293,14 +293,14 @@
       ],
       "startedAt": 0,
       "duration": 120000,
-      "finalReport": "5项全部修复完成",
+      "finalReport": "5项全部通过QA审核",
       "createdAt": 1774518437526,
       "dependsOn": [
         "task-041"
       ],
       "qaRequired": true,
       "note": "update-task.js支持--new-task创建新任务",
-      "doneAt": 1774518613004
+      "doneAt": 1774518816633
     },
     {
       "id": "task-1774518559090",
@@ -317,6 +317,24 @@
       "duration": 0,
       "finalReport": "",
       "createdAt": 1774518559090
+    },
+    {
+      "id": "task-043",
+      "title": "看板UI简化为纯展示模式",
+      "category": "project",
+      "stage": "doing",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "UI简化"
+        }
+      ],
+      "startedAt": 1774519646064,
+      "duration": 0,
+      "finalReport": "",
+      "createdAt": 1774519558037,
+      "qaRequired": true,
+      "note": "移除手动管理按钮，仅保留展开折叠"
     }
   ],
   "history": [
