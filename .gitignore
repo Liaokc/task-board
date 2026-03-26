@@ -1,0 +1,5 @@
+# Task data — each deployment should have its own tasks.json
+tasks.json
+
+# Claude Code project context
+CLAUDE.md
