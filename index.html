@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent 团队协作看板</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --text: #e2e4f0;
+      --text-muted: #8890b5;
+      --accent: #6c8cff;
+      --todo: #f5a623;
+      --doing: #3dd9b3;
+      --done: #6c8cff;
+      --danger: #ff5f7e;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+    header h1 span { color: var(--accent); }
+
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    .sync-badge {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .sync-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+    .sync-dot.ok { background: var(--doing); }
+    .sync-dot.err { background: var(--danger); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn:active { transform: scale(.97); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-success { background: var(--doing); color: #0f1117; }
+    .btn-ghost {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ── Board ── */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 20px 24px;
+      flex: 1;
+    }
+
+    .column {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+    }
+
+    .col-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .col-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .col-title.todo { color: var(--todo); }
+    .col-title.doing { color: var(--doing); }
+    .col-title.done { color: var(--done); }
+    .col-count {
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 99px;
+    }
+
+    .col-cards {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      max-height: calc(100vh - 200px);
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card-title { font-size: 14px; font-weight: 600; line-height: 1.3; }
+    .card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .card-meta {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .card-meta .tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+    }
+    .card-meta .duration {
+      color: var(--doing);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .card-meta .report-time { color: var(--done); }
+    .card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .card-report {
+      background: var(--surface);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      border-left: 3px solid var(--done);
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      width: min(520px, 92vw);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h2 { font-size: 16px; font-weight: 600; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 13px;
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+    /* ── Agent selector chips ── */
+    .agent-chips {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .agent-chip {
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      transition: all .15s;
+    }
+    .agent-chip:hover { border-color: var(--accent); color: var(--text); }
+    .agent-chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 24px 0;
+      opacity: .6;
+    }
+
+    /* ── Info banner ── */
+    .info-banner {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 24px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-banner a { color: var(--accent); text-decoration: none; }
+    .info-banner a:hover { text-decoration: underline; }
+
+    /* ── History Bar ── */
+    .daily-section {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .daily-toggle {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      background: none; border: none;
+      width: 100%;
+      transition: color .15s;
+    }
+    .daily-toggle:hover { color: var(--text); }
+    .daily-toggle .arrow {
+      transition: transform .2s;
+      font-size: 10px;
+    }
+    .daily-toggle .daily-count {
+      background: #3b82f6;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 99px;
+    }
+    .daily-panel .col-cards {
+      max-height: 30vh;
+    }
+    .daily-panel .col-cards .card {
+      border-left: none;
+    }
+
+    .history-section {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .history-toggle {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      background: none; border: none;
+      width: 100%;
+      transition: color .15s;
+    }
+    .history-toggle:hover { color: var(--text); }
+    .history-toggle .arrow {
+      transition: transform .2s;
+      font-size: 10px;
+    }
+    .history-toggle.open .arrow { transform: rotate(180deg); }
+    .history-toggle .history-count {
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 8px;
+      border-radius: 99px;
+    }
+
+    .history-panel {
+      display: none;
+      padding: 0 24px 16px;
+    }
+    .history-panel.open { display: block; }
+    .history-panel .col-cards {
+      max-height: 40vh;
+    }
+    .history-panel .col-cards .card {
+      opacity: .75;
+      border-color: transparent;
+    }
+    .history-panel .col-cards .card:hover { opacity: 1; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .board { grid-template-columns: 1fr; padding: 12px; gap: 12px; }
+      .col-cards { max-height: 60vh; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      header { padding: 12px 16px; }
+      header h1 { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🤖 Agent <span>团队协作看板</span></h1>
+  <div class="header-right">
+    <div class="sync-badge">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">读取中…</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="reloadBtn" title="手动刷新">🔄</button>
+    <button class="btn btn-primary" id="newTaskBtn">+ 新任务</button>
+  </div>
+</header>
+
+<div class="info-banner">
+  📌 数据来源：<code id="dataSource">tasks.json</code>
+  &nbsp;|&nbsp; 🔄 每 10 秒自动刷新
+  &nbsp;|&nbsp; 💾 任务由各 Agent 写入 <code>tasks.json</code>，本看板只读展示
+</div>
+
+<div class="board">
+  <div class="column">
+    <div class="col-header">
+      <span class="col-title todo">📋 TODO</span>
+      <span class="col-count" id="todoCount">0</span>
+    </div>
+    <div class="col-cards" id="todoCards"></div>
+  </div>
+
+  <div class="column">
+    <div class="col-header">
+      <span class="col-title doing">⚡ DOING</span>
+      <span class="col-count" id="doingCount">0</span>
+    </div>
+    <div class="col-cards" id="doingCards"></div>
+  </div>
+
+  <div class="column">
+    <div class="col-header">
+      <span class="col-title done">✅ DONE</span>
+      <span class="col-count" id="doneCount">0</span>
+    </div>
+    <div class="col-cards" id="doneCards"></div>
+  </div>
+</div>
+
+<!-- Daily Tasks Bar -->
+<div class="daily-section" id="dailySection" style="margin: 16px 24px 0;">
+  <button class="daily-toggle" id="dailyToggle" onclick="toggleDaily()">
+    <span>📅 日常任务</span>
+    <span class="daily-count" id="dailyCount">0</span>
+    <span class="arrow">▶</span>
+  </button>
+  <div class="daily-panel" id="dailyPanel" style="display:none;">
+    <div class="col-cards" id="dailyCards"></div>
+  </div>
+</div>
+
+<!-- History Bar -->
+<div class="history-section">
+  <button class="history-toggle" id="historyToggle" onclick="toggleHistory()">
+    <span>📜 历史任务</span>
+    <span class="history-count" id="historyCount">0</span>
+    <span class="arrow">▲</span>
+  </button>
+  <div class="history-panel" id="historyPanel">
+    <div class="col-cards" id="historyCards"></div>
+  </div>
+</div>
+
+<!-- New / Edit Task Modal -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">新建任务</h2>
+    <div class="form-group">
+      <label>标题 *</label>
+      <input type="text" id="fTitle" placeholder="任务标题" maxlength="120" />
+    </div>
+    <div class="form-group">
+      <label>描述</label>
+      <textarea id="fDesc" placeholder="任务描述（可选）" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Agent 分配</label>
+      <div class="agent-chips" id="agentChips">
+        <div class="agent-chip" data-agent="CTO">🛠️ CTO</div>
+        <div class="agent-chip" data-agent="Builder">🔧 Builder</div>
+        <div class="agent-chip" data-agent="Research">🔬 Research</div>
+        <div class="agent-chip" data-agent="Ops">🖥️ Ops</div>
+        <div class="agent-chip" data-agent="CoS">📌 CoS</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Role / 职责</label>
+      <input type="text" id="fRole" placeholder="如: 架构设计" maxlength="60" />
+    </div>
+    <div class="form-group">
+      <label>最终报告（任务完成后填写）</label>
+      <textarea id="fReport" placeholder="任务完成后的总结报告…" rows="2"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelBtn">取消</button>
+      <button class="btn btn-primary" id="saveBtn">💾 保存到 tasks.json（需手动）</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Config ── */
+  const TASKS_JSON = './tasks.json';
+  const REFRESH_MS = 10000;
+
+  /* ── State ── */
+  let tasks = [];
+  let historyTasks = [];
+  let dailyTasks = [];
+  let editingId = null;
+  const HISTORY_THRESHOLD_MS = 12 * 60 * 60 * 1000; // 12 hours
+
+  /* ── UUID ── */
+  function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  /* ── Formatting ── */
+  function formatDuration(ms) {
+    if (!ms || ms < 0) return '—';
+    const s = Math.floor(ms / 1000);
+    const m = Math.floor(s / 60);
+    const h = Math.floor(m / 60);
+    if (h > 0) return `${h}h ${m % 60}m`;
+    if (m > 0) return `${m}m ${s % 60}s`;
+    return `${s}s`;
+  }
+
+  function formatTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const ii = String(d.getMinutes()).padStart(2, '0');
+    return `${mm}-${dd} ${hh}:${ii}`;
+  }
+
+  function agentEmoji(name) {
+    const map = { CTO: '🛠️', Builder: '🔧', Research: '🔬', Ops: '🖥️', CoS: '📌' };
+    return map[name] || '👤';
+  }
+
+  function agentLabel(name) {
+    return `${agentEmoji(name)} ${name}`;
+  }
+
+  /* ── Sync status ── */
+  function setSyncStatus(state, msg) {
+    const dot = document.getElementById('syncDot');
+    const label = document.getElementById('syncLabel');
+    dot.className = 'sync-dot' + (state ? ' ' + state : '');
+    if (msg) label.textContent = msg;
+  }
+
+  /* ── Load tasks.json via fetch ── */
+  async function loadTasks() {
+    try {
+      const resp = await fetch(TASKS_JSON + '?t=' + Date.now());
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      tasks = Array.isArray(data) ? data : (data.tasks || []);
+
+      // Separate daily tasks (category === 'daily')
+      const projectTasks = [];
+      const daily = [];
+      tasks.forEach(t => {
+        if (t.category === 'daily') { daily.push(t); } else { projectTasks.push(t); }
+      });
+      tasks = projectTasks;
+      dailyTasks = daily;
+
+      // Separate history: done > 12h (from project tasks only)
+      const now = Date.now();
+
+      // B3: 直接从 JSON 读取 history[]，再用 tasks[] 中未记录的 done>12h 任务补充
+      const jsonHistory = data.history || [];
+      const historyIds = new Set(jsonHistory.map(h => h.taskId || h.id));
+
+      const active = [];
+      const hist = [...jsonHistory];
+
+      tasks.forEach(t => {
+        if (t.stage !== 'done') { active.push(t); return; }
+        if (!t.doneAt) { active.push(t); return; }
+        const displayDoneAt = t.startedAt && t.duration ? t.startedAt + t.duration : t.doneAt;
+        if ((now - t.doneAt) > HISTORY_THRESHOLD_MS) {
+          if (!historyIds.has(t.id)) {
+            hist.push({ ...t, _doneAt: displayDoneAt });
+          } else {
+            active.push(t);
+          }
+        } else {
+          active.push(t);
+        }
+      });
+      tasks = active;
+      historyTasks = hist;
+
+      setSyncStatus('ok', '同步完成 ' + formatTime(now));
+    } catch (e) {
+      setSyncStatus('err', '读取失败');
+      console.error('[TaskBoard] loadTasks error:', e);
+    }
+  }
+
+  /* ── Render ── */
+  function render() {
+    const cols = { todo: [], doing: [], done: [] };
+    tasks.forEach(t => {
+      const s = t.stage || 'todo';
+      if (cols[s]) cols[s].push(t);
+    });
+
+    document.getElementById('todoCount').textContent = cols.todo.length;
+    document.getElementById('doingCount').textContent = cols.doing.length;
+    document.getElementById('doneCount').textContent = cols.done.length;
+
+    renderColumn('todoCards', cols.todo, 'todo');
+    renderColumn('doingCards', cols.doing, 'doing');
+    renderColumn('doneCards', cols.done, 'done');
+    renderHistory();
+    renderDaily();
+  }
+
+  /* ── Daily ── */
+  function toggleDaily() {
+    const toggle = document.getElementById('dailyToggle');
+    const panel = document.getElementById('dailyPanel');
+    const isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'block';
+    toggle.querySelector('.arrow').textContent = isOpen ? '▶' : '▼';
+  }
+
+  function renderDaily() {
+    const countEl = document.getElementById('dailyCount');
+    const cardsEl = document.getElementById('dailyCards');
+    countEl.textContent = dailyTasks.length;
+    if (!dailyTasks.length) {
+      cardsEl.innerHTML = '<div class="empty-state">暂无日常任务</div>';
+      return;
+    }
+    // Simple vertical list: emoji + title + stage label
+    const stageEmoji = { todo: '📋', doing: '⚡', done: '✅' };
+    const stageLabel = { todo: 'TODO', doing: 'DOING', done: 'DONE' };
+    const stageColor = { todo: '#f5a623', doing: '#3dd9b3', done: '#6c8cff' };
+    cardsEl.innerHTML = dailyTasks.map(t => {
+      const s = t.stage || 'todo';
+      return `<div class="card" style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:16px;flex-shrink:0">${stageEmoji[s] || '📋'}</span>
+        <span style="flex:1;font-size:14px;font-weight:500">${escHtml(t.title)}</span>
+        <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:${stageColor[s] || '#6c8cff'}22;color:${stageColor[s] || '#6c8cff'};border:1px solid ${stageColor[s] || '#6c8cff'}44">${stageLabel[s] || 'TODO'}</span>
+      </div>`;
+    }).join('');
+  }
+
+  /* ── History ── */
+  function toggleHistory() {
+    const toggle = document.getElementById('historyToggle');
+    const panel = document.getElementById('historyPanel');
+    toggle.classList.toggle('open');
+    panel.classList.toggle('open');
+  }
+
+  function renderHistory() {
+    const countEl = document.getElementById('historyCount');
+    const cardsEl = document.getElementById('historyCards');
+    countEl.textContent = historyTasks.length;
+    if (!historyTasks.length) {
+      cardsEl.innerHTML = '<div class="empty-state">暂无历史任务</div>';
+      return;
+    }
+    cardsEl.innerHTML = historyTasks.map(t => historyCardHTML(t)).join('');
+  }
+
+  function historyCardHTML(t) {
+    const id = escHtml(t.id);
+    const doneAt = t._doneAt || t.doneAt || t.createdAt;
+    return `
+<div class="card" data-id="${id}">
+  <div class="card-title">${escHtml(t.title)}</div>
+  <div class="card-meta">
+    <span class="report-time">✅ ${formatTime(doneAt)}</span>
+    ${assigneeTags(t.assignees)}
+    ${t.duration ? `<span class="duration">⏱️ ${formatDuration(t.duration)}</span>` : ''}
+  </div>
+  ${t.finalReport ? `<div class="card-report">${escHtml(t.finalReport)}</div>` : ''}
+  <div class="card-actions">
+    <button class="btn btn-ghost btn-sm" onclick="reopenTask('${id}')">🔄 还原</button>
+    <button class="btn btn-danger btn-sm" onclick="deleteTask('${id}')">🗑️</button>
+  </div>
+</div>`;
+  }
+
+  function renderColumn(elId, items, stage) {
+    const el = document.getElementById(elId);
+    if (!items.length) {
+      el.innerHTML = '<div class="empty-state">暂无任务</div>';
+      return;
+    }
+    el.innerHTML = items.map(t => cardHTML(t, stage)).join('');
+  }
+
+  function assigneeTags(assignees) {
+    if (!assignees || !assignees.length) return '';
+    return assignees.map(a =>
+      `<span class="tag">${agentLabel(a.agent)}</span>${a.role ? `<span class="tag">📋 ${escHtml(a.role)}</span>` : ''}`
+    ).join('');
+  }
+
+  function cardHTML(t, stage) {
+    const id = escHtml(t.id);
+
+    if (stage === 'todo') {
+      return `
+<div class="card" data-id="${id}">
+  <div class="card-title">${escHtml(t.title)}</div>
+  ${t.description ? `<div class="card-desc">${escHtml(t.description)}</div>` : ''}
+  <div class="card-meta">
+    ${assigneeTags(t.assignees)}
+    <span class="tag">${formatTime(t.createdAt)}</span>
+  </div>
+  <div class="card-actions">
+    <button class="btn btn-success btn-sm" onclick="startTask('${id}')">▶ 开始</button>
+    <button class="btn btn-ghost btn-sm" onclick="editTask('${id}')">✏️ 编辑</button>
+    <button class="btn btn-danger btn-sm" onclick="deleteTask('${id}')">🗑️</button>
+  </div>
+</div>`;
+    }
+
+    if (stage === 'doing') {
+      const now = Date.now();
+      const started = t.startedAt ? new Date(t.startedAt) : null;
+      const dur = started ? now - t.startedAt : 0;
+      return `
+<div class="card" data-id="${id}">
+  <div class="card-title">${escHtml(t.title)}</div>
+  ${t.description ? `<div class="card-desc">${escHtml(t.description)}</div>` : ''}
+  <div class="card-meta">
+    ${assigneeTags(t.assignees)}
+    <span class="duration" id="dur-${id}">⏱️ ${formatDuration(dur)}</span>
+    ${started ? `<span class="tag">${formatTime(t.startedAt)}</span>` : ''}
+  </div>
+  <div class="card-actions">
+    <button class="btn btn-primary btn-sm" onclick="completeTask('${id}')">✅ 完成</button>
+    <button class="btn btn-ghost btn-sm" onclick="pauseTask('${id}')">⏸ 暂停</button>
+  </div>
+</div>`;
+    }
+
+    if (stage === 'done') {
+      return `
+<div class="card" data-id="${id}">
+  <div class="card-title">${escHtml(t.title)}</div>
+  <div class="card-meta">
+    <span class="report-time">✅ ${formatTime(t.doneAt || t.completedAt)}</span>
+    ${assigneeTags(t.assignees)}
+    ${t.duration ? `<span class="duration">⏱️ ${formatDuration(t.duration)}</span>` : ''}
+  </div>
+  ${t.finalReport ? `<div class="card-report">${escHtml(t.finalReport)}</div>` : ''}
+  <div class="card-actions">
+    <button class="btn btn-ghost btn-sm" onclick="reopenTask('${id}')">🔄 还原</button>
+    <button class="btn btn-danger btn-sm" onclick="deleteTask('${id}')">🗑️</button>
+  </div>
+</div>`;
+    }
+
+    return '';
+  }
+
+  function escHtml(s) {
+    if (!s && s !== 0) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ── Duration refresh ── */
+  function refreshDurations() {
+    const now = Date.now();
+    // B1: 同时刷新 dailyTasks
+    [...tasks, ...dailyTasks].forEach(t => {
+      if (t.stage !== 'doing' || !t.startedAt) return;
+      const el = document.getElementById('dur-' + t.id);
+      if (el) el.textContent = `⏱️ ${formatDuration(now - t.startedAt)}`;
+    });
+  }
+
+  /* ── Action helpers ── */
+  function getTaskJSON(id) {
+    const t = tasks.find(x => x.id === id);
+    if (!t) return null;
+    return JSON.stringify({ tasks }, null, 2);
+  }
+
+  /* ── Actions: update local tasks array + generate JSON for copy/download ── */
+  function applyAndExport(updates) {
+    tasks = tasks.map(t => updates(t));
+    dailyTasks = dailyTasks.map(t => updates(t));
+    render();
+    // Generate downloadable tasks.json for agents to save
+    downloadTasksJSON();
+  }
+
+  function downloadTasksJSON() {
+    const blob = new Blob([JSON.stringify({ tasks: [...tasks, ...dailyTasks] }, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tasks.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    setSyncStatus('ok', '已生成 tasks.json 下载');
+  }
+
+  function startTask(id) {
+    applyAndExport(t => t.id !== id ? t : {
+      ...t,
+      stage: 'doing',
+      startedAt: Date.now(),
+      duration: 0
+    });
+  }
+
+  function pauseTask(id) {
+    applyAndExport(t => {
+      if (t.id !== id) return t;
+      const elapsed = t.startedAt ? Date.now() - t.startedAt : 0;
+      return {
+        ...t,
+        stage: 'todo',
+        startedAt: null,
+        duration: (t.duration || 0) + elapsed
+      };
+    });
+  }
+
+  function completeTask(id) {
+    const now = Date.now();
+    applyAndExport(t => {
+      if (t.id !== id) return t;
+      const dur = t.startedAt ? now - t.startedAt : (t.duration || 0);
+      return {
+        ...t,
+        stage: 'done',
+        doneAt: now,
+        duration: dur,
+        finalReport: t.finalReport || `[完成] ${t.title} | 耗时: ${formatDuration(dur)}`
+      };
+    });
+  }
+
+  function reopenTask(id) {
+    applyAndExport(t => t.id !== id ? t : {
+      ...t,
+      stage: 'todo',
+      doneAt: undefined,
+      completedAt: undefined,
+      duration: 0,
+      finalReport: ''
+    });
+  }
+
+  function deleteTask(id) {
+    if (!confirm('确认删除该任务？')) return;
+    // Remove from active tasks, history, AND daily
+    tasks = tasks.filter(t => t.id !== id);
+    historyTasks = historyTasks.filter(t => t.id !== id);
+    dailyTasks = dailyTasks.filter(t => t.id !== id);
+    downloadTasksJSON();
+    render();
+  }
+
+  /* ── Modal ── */
+  const modalOverlay = document.getElementById('modalOverlay');
+  const fTitle = document.getElementById('fTitle');
+  const fDesc = document.getElementById('fDesc');
+  const fRole = document.getElementById('fRole');
+  const fReport = document.getElementById('fReport');
+  const modalTitle = document.getElementById('modalTitle');
+  const agentChips = document.getElementById('agentChips');
+
+  let selectedAgents = [];
+
+  function openModal(taskId) {
+    editingId = taskId;
+    selectedAgents = [];
+
+    if (taskId) {
+      const t = tasks.find(x => x.id === taskId);
+      if (!t) return;
+      modalTitle.textContent = '编辑任务';
+      fTitle.value = t.title || '';
+      fDesc.value = t.description || '';
+      fReport.value = t.finalReport || '';
+      fRole.value = t.assignees && t.assignees[0] ? t.assignees[0].role : '';
+      selectedAgents = t.assignees ? t.assignees.map(a => a.agent) : [];
+    } else {
+      modalTitle.textContent = '新建任务';
+      fTitle.value = '';
+      fDesc.value = '';
+      fReport.value = '';
+      fRole.value = '';
+    }
+
+    renderAgentChips();
+    modalOverlay.classList.remove('hidden');
+    fTitle.focus();
+  }
+
+  function closeModal() {
+    modalOverlay.classList.add('hidden');
+    editingId = null;
+    selectedAgents = [];
+  }
+
+  function renderAgentChips() {
+    document.querySelectorAll('.agent-chip').forEach(chip => {
+      const agent = chip.dataset.agent;
+      chip.classList.toggle('selected', selectedAgents.includes(agent));
+    });
+  }
+
+  function toggleAgentChip(agent) {
+    if (selectedAgents.includes(agent)) {
+      selectedAgents = selectedAgents.filter(a => a !== agent);
+    } else {
+      selectedAgents.push(agent);
+    }
+    renderAgentChips();
+  }
+
+  function saveModal() {
+    const title = fTitle.value.trim();
+    if (!title) { fTitle.focus(); return; }
+    const description = fDesc.value.trim();
+    const role = fRole.value.trim();
+    const finalReport = fReport.value.trim();
+
+    const assignees = selectedAgents.map(agent => ({ agent, role: agent === selectedAgents[0] ? role : '' }));
+
+    if (editingId) {
+      tasks = tasks.map(t => {
+        if (t.id !== editingId) return t;
+        return { ...t, title, description, assignees, finalReport };
+      });
+    } else {
+      tasks.push({
+        id: uuid(),
+        title,
+        description,
+        stage: 'todo',
+        assignees,
+        startedAt: null,
+        duration: 0,
+        finalReport,
+        createdAt: Date.now()
+      });
+    }
+
+    downloadTasksJSON(); // Always download after save so agents can deploy
+    closeModal();
+    render();
+  }
+
+  function editTask(id) { openModal(id); }
+
+  /* ── Event bindings ── */
+  document.getElementById('newTaskBtn').addEventListener('click', () => openModal(null));
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('saveBtn').addEventListener('click', saveModal);
+  modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
+
+  document.getElementById('reloadBtn').addEventListener('click', async () => {
+    setSyncStatus('', '刷新中…');
+    await loadTasks();
+    render();
+  });
+
+  agentChips.addEventListener('click', e => {
+    const chip = e.target.closest('.agent-chip');
+    if (chip) toggleAgentChip(chip.dataset.agent);
+  });
+
+  /* ── Keyboard shortcuts ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') saveModal();
+  });
+
+  /* ── Boot + auto-refresh ── */
+  (async function init() {
+    await loadTasks();
+    render();
+    setInterval(async () => {
+      await loadTasks();
+      render();
+      refreshDurations();
+    }, REFRESH_MS);
+    setInterval(refreshDurations, 5000);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,712 @@
+{
+  "tasks": [
+    {
+      "id": "task-004",
+      "title": "Arxiv论文每日推送",
+      "category": "daily",
+      "stage": "doing",
+      "assignees": [
+        {
+          "agent": "Research",
+          "role": "论文调研"
+        },
+        {
+          "agent": "CoS",
+          "role": "用户推送"
+        }
+      ],
+      "startedAt": 1742866800000,
+      "duration": 0,
+      "finalReport": "",
+      "createdAt": 1742866800000
+    },
+    {
+      "id": "task-006",
+      "title": "看板UI双向同步",
+      "category": "project",
+      "stage": "todo",
+      "assignees": [
+        {
+          "agent": "CoS",
+          "role": "方案讨论"
+        }
+      ],
+      "startedAt": 1742903400000,
+      "duration": 120000,
+      "finalReport": "",
+      "createdAt": 1742903400000
+    },
+    {
+      "id": "task-014",
+      "title": "Phase1-MAT-002 OllamaBridge实现",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "OllamaBridge实现"
+        }
+      ],
+      "startedAt": 1742953920000,
+      "duration": 600000,
+      "finalReport": "list/pull/generate/chat/stats + Metal利用率 + 异常处理",
+      "createdAt": 1742953920000,
+      "doneAt": 1742954520000
+    },
+    {
+      "id": "task-015",
+      "title": "Phase1-MAT-003 SessionManager实现",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "SessionManager实现"
+        }
+      ],
+      "startedAt": 1742953920000,
+      "duration": 600000,
+      "finalReport": "SQLite WAL + CRUD + messages + JSON导出",
+      "createdAt": 1742953920000,
+      "doneAt": 1742954520000
+    },
+    {
+      "id": "task-016",
+      "title": "Phase1-MAT-004 SwiftUI↔PythonIPC层",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "IPC层实现"
+        }
+      ],
+      "startedAt": 1742953920000,
+      "duration": 600000,
+      "finalReport": "Subprocess JSON行协议",
+      "createdAt": 1742953920000,
+      "doneAt": 1742954520000
+    },
+    {
+      "id": "task-017",
+      "title": "Phase1-MAT-005最简ChatUI",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "ChatUI实现"
+        }
+      ],
+      "startedAt": 1742953920000,
+      "duration": 600000,
+      "finalReport": "SwiftUI ChatView + 气泡 + toolbar + session切换 + stream",
+      "createdAt": 1742953920000,
+      "doneAt": 1742954520000
+    },
+    {
+      "id": "task-033",
+      "title": "Phase3 实现",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "Phase3实现"
+        }
+      ],
+      "startedAt": 1742967000000,
+      "duration": 1080000,
+      "finalReport": "8个Task全部完成，53 tests passed，Phase 3 commit就绪",
+      "createdAt": 1742967000000,
+      "qaRequired": true,
+      "doneAt": 1774507628715
+    },
+    {
+      "id": "task-034",
+      "title": "Phase3 QA审核",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "QA",
+          "role": "Phase3审核"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 240000,
+      "finalReport": "Phase 3通过QA审核，3个Minor建议可在后续迭代处理",
+      "createdAt": 1744507800000,
+      "qaRequired": true,
+      "doneAt": 1774507816551
+    },
+    {
+      "id": "task-035",
+      "title": "Phase3 Ops部署",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Ops",
+          "role": "部署"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 180000,
+      "finalReport": "所有文件存在，依赖已装，Git等网络恢复",
+      "createdAt": 1774507816551,
+      "qaRequired": true,
+      "doneAt": 1774507948039
+    },
+    {
+      "id": "task-036",
+      "title": "Phase1-3本地运行验证",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Ops",
+          "role": "本地验证"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 60000,
+      "finalReport": "所有Python模块语法正确，依赖已装，ollama和xcodegen需手动安装",
+      "createdAt": 1774515823493,
+      "qaRequired": true,
+      "note": "xcodegen生成项目 + ollama启动 + App运行验证",
+      "doneAt": 1774515905117
+    },
+    {
+      "id": "task-037",
+      "title": "Phase4内测准备",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "CTO",
+          "role": "规划"
+        }
+      ],
+      "startedAt": 1774515905117,
+      "duration": 180000,
+      "finalReport": "Phase4规划完成: 20个内测用例+验收标准+Phase5建议",
+      "createdAt": 1774515823493,
+      "dependsOn": [
+        "task-036"
+      ],
+      "doneAt": 1774516053096
+    },
+    {
+      "id": "task-038",
+      "title": "看板R2-过期任务自动迁移history[]",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "修复R2"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 120000,
+      "finalReport": "5项全部修复完成",
+      "createdAt": 1774518437526,
+      "qaRequired": true,
+      "note": "update-task.js中实现done时自动迁移>12h任务到history[]",
+      "doneAt": 1774518613004
+    },
+    {
+      "id": "task-039",
+      "title": "看板B3-history[]数组从未被读取",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "修复B3"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 120000,
+      "finalReport": "5项全部修复完成",
+      "createdAt": 1774518437526,
+      "dependsOn": [
+        "task-038"
+      ],
+      "qaRequired": true,
+      "note": "loadTasks时合并tasks[]+history[]，而非仅读tasks[]",
+      "doneAt": 1774518613004
+    },
+    {
+      "id": "task-040",
+      "title": "看板B1-Daily任务doing状态时长不计时",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "修复B1"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 120000,
+      "finalReport": "5项全部修复完成",
+      "createdAt": 1774518437526,
+      "dependsOn": [
+        "task-039"
+      ],
+      "qaRequired": true,
+      "doneAt": 1774518613004
+    },
+    {
+      "id": "task-041",
+      "title": "看板B2-暂停任务不累积已流逝时间",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "修复B2"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 120000,
+      "finalReport": "5项全部修复完成",
+      "createdAt": 1774518437526,
+      "dependsOn": [
+        "task-040"
+      ],
+      "qaRequired": true,
+      "doneAt": 1774518613004
+    },
+    {
+      "id": "task-042",
+      "title": "看板R1-新建任务功能",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "修复R1"
+        }
+      ],
+      "startedAt": 0,
+      "duration": 120000,
+      "finalReport": "5项全部修复完成",
+      "createdAt": 1774518437526,
+      "dependsOn": [
+        "task-041"
+      ],
+      "qaRequired": true,
+      "note": "update-task.js支持--new-task创建新任务",
+      "doneAt": 1774518613004
+    },
+    {
+      "id": "task-1774518559090",
+      "title": "测试新建任务",
+      "description": "",
+      "stage": "todo",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": ""
+        }
+      ],
+      "startedAt": null,
+      "duration": 0,
+      "finalReport": "",
+      "createdAt": 1774518559090
+    }
+  ],
+  "history": [
+    {
+      "taskId": "task-001",
+      "title": "多Agent任务同步系统架构设计",
+      "assignees": [
+        {
+          "agent": "CTO",
+          "role": "架构设计"
+        }
+      ],
+      "doneAt": 1742901600000,
+      "movedToHistoryAt": 1742950620000,
+      "duration": 7200000,
+      "finalReport": "已完成 tasks.json 数据模型定义，index.html 改为每10秒从 tasks.json 读取并渲染"
+    },
+    {
+      "taskId": "task-002",
+      "title": "看板UI适配新数据模型",
+      "assignees": [
+        {
+          "agent": "CTO",
+          "role": "前端重构"
+        }
+      ],
+      "doneAt": 1742898600000,
+      "movedToHistoryAt": 1742950620000,
+      "duration": 600000,
+      "finalReport": "已完成 index.html 重构，每10秒刷新，增加同步状态指示器"
+    },
+    {
+      "taskId": "task-003",
+      "title": "Agent任务同步流程文档",
+      "assignees": [
+        {
+          "agent": "CoS",
+          "role": "流程规范"
+        }
+      ],
+      "doneAt": 1742898300000,
+      "movedToHistoryAt": 1742950620000,
+      "duration": 300000,
+      "finalReport": "已写入 Agent 任务同步流程规范"
+    },
+    {
+      "taskId": "task-005",
+      "title": "看板多Agent自动同步机制",
+      "assignees": [
+        {
+          "agent": "CoS",
+          "role": "总协调"
+        },
+        {
+          "agent": "CTO",
+          "role": "架构支持"
+        },
+        {
+          "agent": "Builder",
+          "role": "实现支持"
+        },
+        {
+          "agent": "Research",
+          "role": "调研支持"
+        },
+        {
+          "agent": "Ops",
+          "role": "部署支持"
+        }
+      ],
+      "doneAt": 1742896200000,
+      "movedToHistoryAt": 1742950620000,
+      "duration": 1800000,
+      "finalReport": "已实现Agent完成→CoS→tasks.json→看板自动刷新完整闭环"
+    },
+    {
+      "taskId": "task-007",
+      "title": "每日互联网情报收集",
+      "assignees": [
+        {
+          "agent": "Research",
+          "role": "多平台信息收集"
+        },
+        {
+          "agent": "CoS",
+          "role": "情报筛选+用户汇报"
+        }
+      ],
+      "doneAt": 1742952900000,
+      "movedToHistoryAt": 1742955060000,
+      "duration": 180000,
+      "finalReport": "10条发现，5个推荐方向已汇报用户"
+    },
+    {
+      "taskId": "task-008",
+      "title": "CoS→Discord推送链路排查",
+      "assignees": [
+        {
+          "agent": "Ops",
+          "role": "网络排查"
+        }
+      ],
+      "doneAt": 1742950560000,
+      "movedToHistoryAt": 1742955060000,
+      "duration": 960000,
+      "finalReport": "暂停。根因：Clash TUN模式拦截TLS。建议改日用方案B或切系统代理模式"
+    },
+    {
+      "taskId": "task-009",
+      "title": "配置每日情报cron",
+      "assignees": [
+        {
+          "agent": "Ops",
+          "role": "cron配置"
+        }
+      ],
+      "doneAt": 1742952600000,
+      "movedToHistoryAt": 1742955060000,
+      "duration": 60000,
+      "finalReport": "Cron ID: 1b823991-3ea1-4df9-b9ab-f48f310d0068；每天08:30跑，覆盖X/Reddit/HN/GitHub"
+    },
+    {
+      "taskId": "task-010",
+      "title": "本地Agent工具链深度调研",
+      "assignees": [
+        {
+          "agent": "Research",
+          "role": "深度调研"
+        }
+      ],
+      "doneAt": 1742953140000,
+      "movedToHistoryAt": 1742954220000,
+      "duration": 300000,
+      "finalReport": "8个核心发现，竞争格局图谱，3个机会点，2个风险"
+    },
+    {
+      "taskId": "task-011",
+      "title": "本地Agent工具链需求+产品分析",
+      "assignees": [
+        {
+          "agent": "CoS",
+          "role": "需求产品分析"
+        }
+      ],
+      "doneAt": 1742953560000,
+      "movedToHistoryAt": 1742954220000,
+      "duration": 420000,
+      "finalReport": "推荐macOS本地Agent工具链分发版，整合ollama+Cline+记忆管理"
+    },
+    {
+      "taskId": "task-012",
+      "title": "macOS本地Agent工具链架构设计",
+      "assignees": [
+        {
+          "agent": "CTO",
+          "role": "架构设计"
+        }
+      ],
+      "doneAt": 1742953860000,
+      "movedToHistoryAt": 1742955060000,
+      "duration": 240000,
+      "finalReport": "6模块架构确定，Phase 1派单5个Task"
+    },
+    {
+      "taskId": "task-018",
+      "title": "Phase1 QA-1 审核",
+      "assignees": [
+        {
+          "agent": "QA",
+          "role": "代码审核"
+        }
+      ],
+      "doneAt": 1742955360000,
+      "movedToHistoryAt": 1742956200000,
+      "duration": 300000,
+      "finalReport": "2个P0缺陷：AgentBridge语法错误+chatStream永久挂起；打回Builder修复"
+    },
+    {
+      "taskId": "task-019",
+      "title": "Phase1 P0缺陷修复",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "P0缺陷修复"
+        }
+      ],
+      "doneAt": 1742955960000,
+      "movedToHistoryAt": 1742956200000,
+      "duration": 600000,
+      "finalReport": "3个P0全部修复：语法错误+chatStream重写+协议统一"
+    },
+    {
+      "taskId": "task-020",
+      "title": "Phase1 QA-2 复审",
+      "assignees": [
+        {
+          "agent": "QA",
+          "role": "复审"
+        }
+      ],
+      "doneAt": 1742956140000,
+      "movedToHistoryAt": 1742956200000,
+      "duration": 180000,
+      "finalReport": "3个P0修复全部验证通过，建议进入Ops部署"
+    },
+    {
+      "taskId": "task-021",
+      "title": "Phase1 Ops部署",
+      "assignees": [
+        {
+          "agent": "Ops",
+          "role": "部署"
+        }
+      ],
+      "doneAt": 1742956260000,
+      "movedToHistoryAt": 1742956200000,
+      "duration": 300000,
+      "finalReport": "部署文档已写入DEPLOY.md，提供xcodegen绕过方案和完整运行步骤"
+    },
+    {
+      "taskId": "task-022",
+      "title": "Phase2-Agent执行层+记忆管理架构设计",
+      "assignees": [
+        {
+          "agent": "CTO",
+          "role": "架构设计"
+        }
+      ],
+      "doneAt": 1742959800000,
+      "movedToHistoryAt": 1742960400000,
+      "duration": 420000,
+      "finalReport": "Phase2架构文档完成: agent_executor.py + memory_manager.py + tool_executor.py + context_window.py"
+    },
+    {
+      "taskId": "task-023",
+      "title": "Phase2-Task2A ToolExecutor",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "ToolExecutor实现"
+        }
+      ],
+      "doneAt": 1742960400000,
+      "movedToHistoryAt": 1742961000000,
+      "duration": 1200000,
+      "finalReport": "bash沙箱+文件工具+路径防护"
+    },
+    {
+      "taskId": "task-024",
+      "title": "Phase2-Task2B MemoryManager",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "MemoryManager实现"
+        }
+      ],
+      "doneAt": 1742960400000,
+      "movedToHistoryAt": 1742961000000,
+      "duration": 1200000,
+      "finalReport": "FTS5全文搜索+embedding双记忆层"
+    },
+    {
+      "taskId": "task-025",
+      "title": "Phase2-Task2C ContextWindowManager",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "ContextWindow实现"
+        }
+      ],
+      "doneAt": 1742960400000,
+      "movedToHistoryAt": 1742961000000,
+      "duration": 1200000,
+      "finalReport": "tiktoken计数+middle truncation"
+    },
+    {
+      "taskId": "task-026",
+      "title": "Phase2-Task2D AgentExecutor",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "AgentExecutor实现"
+        }
+      ],
+      "doneAt": 1742960400000,
+      "movedToHistoryAt": 1742961000000,
+      "duration": 1200000,
+      "finalReport": "ReAct loop + 流式输出"
+    },
+    {
+      "taskId": "task-027",
+      "title": "Phase2-Task2E IPC扩展+Swift集成",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "IPC扩展实现"
+        }
+      ],
+      "doneAt": 1742960400000,
+      "movedToHistoryAt": 1742961000000,
+      "duration": 1200000,
+      "finalReport": "5个新IPC命令 + Swift AgentBridge扩展"
+    },
+    {
+      "taskId": "task-028",
+      "title": "Phase2 QA审核",
+      "assignees": [
+        {
+          "agent": "QA",
+          "role": "Phase2代码审核"
+        }
+      ],
+      "doneAt": 1742961000000,
+      "movedToHistoryAt": 1742961180000,
+      "duration": 300000,
+      "finalReport": "2个P0缺陷：middle_truncation逻辑bug + osascript安全风险；打回Builder修复"
+    },
+    {
+      "taskId": "task-029",
+      "title": "Phase2 P0缺陷修复",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "P0缺陷修复"
+        }
+      ],
+      "doneAt": 1742961180000,
+      "movedToHistoryAt": 1742961240000,
+      "duration": 300000,
+      "finalReport": "P0-1 middle_truncate修复 + P0-2 osascript移除 + P2-1 token重复计数修复"
+    },
+    {
+      "taskId": "task-030",
+      "title": "Phase2 QA复审",
+      "assignees": [
+        {
+          "agent": "QA",
+          "role": "复审"
+        }
+      ],
+      "doneAt": 1742961240000,
+      "movedToHistoryAt": 1742961300000,
+      "duration": 180000,
+      "finalReport": "全部3个修复验证通过，Phase 2通过QA验收"
+    },
+    {
+      "taskId": "task-031",
+      "title": "Phase2 Ops部署",
+      "assignees": [
+        {
+          "agent": "Ops",
+          "role": "部署"
+        }
+      ],
+      "doneAt": 1742961300000,
+      "movedToHistoryAt": 1742961300000,
+      "duration": 120000,
+      "finalReport": "代码就绪，依赖已装，Git push等网络恢复"
+    },
+    {
+      "taskId": "task-032",
+      "title": "Phase3-架构设计",
+      "assignees": [
+        {
+          "agent": "CTO",
+          "role": "架构设计"
+        }
+      ],
+      "doneAt": 1742967000000,
+      "movedToHistoryAt": 1742967000000,
+      "duration": 480000,
+      "finalReport": "Phase3架构完成: AgentModeUI+ToolRegistry+ConfigManager+MemoryManagerUI+SettingsView"
+    },
+    {
+      "id": "task-013",
+      "title": "Phase1-MAT-001 Xcode项目初始化",
+      "category": "project",
+      "stage": "done",
+      "assignees": [
+        {
+          "agent": "Builder",
+          "role": "Xcode项目初始化"
+        }
+      ],
+      "startedAt": 1742953920000,
+      "duration": 300000,
+      "finalReport": "project.yml + Swift App入口 + ContentView + Assets",
+      "createdAt": 1742953920000,
+      "doneAt": 1742954220000,
+      "movedToHistoryAt": 1774518575438
+    }
+  ]
+}
